@@ -1,0 +1,31 @@
+# OS
+Thumbs.db
+.DS_Store
+
+# Secrets — never commit these
+.env
+.env.*
+!.env.example
+*.pem
+credentials
+terraform.tfvars
+
+# Terraform (later)
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+infra/live/backend.hcl
+
+# Node (later)
+node_modules/
+frontend/dist/
+
+# Python (later)
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.coverage
