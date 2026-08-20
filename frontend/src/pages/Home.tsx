@@ -1,4 +1,25 @@
+import { useEffect, useState } from "react";
+import { FALLBACK_TRACE, incrementVisits } from "../lib/api";
+import { useTracer } from "../lib/tracer";
+
 export function HomePage() {
+  const { setTrace } = useTracer();
+  const [count, setCount] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    incrementVisits()
+      .then((data) => {
+        setCount(data.count);
+        setTrace(data.trace);
+        setError(null);
+      })
+      .catch((e: Error) => {
+        setError(e.message);
+        setTrace(FALLBACK_TRACE);
+      });
+  }, [setTrace]);
+
   return (
     <article>
       <p className="kicker">Portfolio · Cloud · DevOps</p>
@@ -7,6 +28,16 @@ export function HomePage() {
         BSc (Hons) Cloud Computing, Colombo. DevOps internship at 10QBIT
         (remote, UK). I teach AWS on YouTube as CloudNest.
       </p>
+      <p>
+        <strong>Live visitor count:</strong>{" "}
+        {count === null && !error ? "calling Lambda…" : count}
+      </p>
+      {error && (
+        <p>
+          API error: {error}. Check <code>frontend/.env</code> and that you
+          restarted <code>npm run dev</code>.
+        </p>
+      )}
       <ul>
         <li>AWS Certified Cloud Practitioner</li>
         <li>AWS Certified Solutions Architect – Associate</li>
@@ -19,10 +50,6 @@ export function HomePage() {
         <a href="https://github.com/Sheshanadaf">GitHub</a>
         {" · "}
         <a href="https://medium.com/@sheshanhebron61">Medium</a>
-      </p>
-      <p>
-        This site is Aether Lab — labs will call real AWS in later steps. Right
-        now you are looking at the skeleton.
       </p>
     </article>
   );
