@@ -11,4 +11,5 @@ variable "project" {
 variable "alert_email" {
   type        = string
   description = "SNS alarm email. You must Confirm the subscription in your inbox."
+  default     = "sheshanhebron61@gmail.com"
 }

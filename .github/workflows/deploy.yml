@@ -34,7 +34,6 @@ jobs:
         working-directory: frontend
         env:
           VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
-          VITE_COGNITO_CLIENT_ID: ${{ steps.out.outputs.cognito }}
         run: npm run build
 
   terraform:
@@ -78,6 +77,7 @@ jobs:
         working-directory: frontend
         env:
           VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
+          VITE_COGNITO_CLIENT_ID: ${{ steps.out.outputs.cognito }}
         run: |
           npm install
           npm run build
