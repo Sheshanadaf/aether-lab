@@ -1,5 +1,13 @@
-import { useState } from "react";
-import { FALLBACK_TRACE, getJob, incrementVisits, submitJob } from "../lib/api";
+import { useState, type ChangeEvent } from "react";
+import {
+  FALLBACK_TRACE,
+  getJob,
+  getUpload,
+  incrementVisits,
+  putToS3,
+  signUpload,
+  submitJob,
+} from "../lib/api";
 import { useTracer } from "../lib/tracer";
 
 export function LabsPage() {
@@ -8,6 +16,8 @@ export function LabsPage() {
   const [error, setError] = useState<string | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
   const [jobStatus, setJobStatus] = useState<string | null>(null);
+  const [uploadId, setUploadId] = useState<string | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<string | null>(null);
 
   async function hit() {
     try {
@@ -37,6 +47,29 @@ export function LabsPage() {
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "failed");
+      setTrace(FALLBACK_TRACE);
+    }
+  }
+
+  async function onFile(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const signed = await signUpload(file.type, file.size);
+      setUploadId(signed.uploadId);
+      setUploadStatus("uploading");
+      setTrace(signed.trace);
+      setError(null);
+      await putToS3(signed.url, file);
+      for (let i = 0; i < 10; i += 1) {
+        await new Promise((r) => setTimeout(r, 1000));
+        const latest = await getUpload(signed.uploadId);
+        setUploadStatus(latest.status);
+        setTrace(latest.trace);
+        if (latest.status === "stored") return;
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "failed");
       setTrace(FALLBACK_TRACE);
     }
   }
@@ -72,6 +105,19 @@ export function LabsPage() {
       {jobStatus === "pending" && (
         <p>If this was poison, it will stay pending. Check SQS queue aether-lab-jobs-dlq.</p>
       )}
+
+      <h1>Upload pipeline</h1>
+      <p>
+        POST /uploads returns a 60-second S3 URL. The file goes to S3, not through Lambda. EventBridge
+        then records metadata. No AWS keys in the browser.
+      </p>
+      <p>
+        <input type="file" accept="image/jpeg,image/png,image/webp" onChange={onFile} />
+      </p>
+      <p>
+        Upload: {uploadId ?? "—"} — {uploadStatus ?? "—"}
+      </p>
+
       {error && <p>{error}</p>}
     </article>
   );

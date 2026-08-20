@@ -22,6 +22,8 @@ data "aws_iam_policy_document" "github_actions_deploy" {
       "iam:AttachRolePolicy",
       "iam:DetachRolePolicy",
       "iam:UpdateAssumeRolePolicy",
+      "events:*",
+      "sqs:*",
     ]
     resources = ["*"]
   }

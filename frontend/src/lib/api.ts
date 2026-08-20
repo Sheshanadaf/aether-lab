@@ -68,3 +68,45 @@ export async function getJob(jobId: string): Promise<JobResponse> {
   }
   return res.json() as Promise<JobResponse>;
 }
+
+export type UploadSignResponse = {
+  uploadId: string;
+  url: string;
+  key: string;
+  trace: Trace;
+};
+
+export type UploadStatusResponse = {
+  uploadId: string;
+  status: string;
+  bytes?: number;
+  contentType?: string;
+  trace: Trace;
+};
+
+export async function signUpload(contentType: string, size: number): Promise<UploadSignResponse> {
+  if (!BASE) throw new Error("VITE_API_BASE is missing.");
+  const res = await fetch(`${BASE}/uploads`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ contentType, size }),
+  });
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json() as Promise<UploadSignResponse>;
+}
+
+export async function getUpload(uploadId: string): Promise<UploadStatusResponse> {
+  if (!BASE) throw new Error("VITE_API_BASE is missing.");
+  const res = await fetch(`${BASE}/uploads/${uploadId}`);
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json() as Promise<UploadStatusResponse>;
+}
+
+export async function putToS3(url: string, file: File): Promise<void> {
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: { "content-type": file.type },
+    body: file,
+  });
+  if (!res.ok) throw new Error(`S3 PUT ${res.status}`);
+}

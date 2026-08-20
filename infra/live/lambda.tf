@@ -34,6 +34,10 @@ data "aws_iam_policy_document" "counter" {
     actions   = ["sqs:SendMessage"]
     resources = [aws_sqs_queue.jobs.arn]
   }
+  statement {
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.uploads.arn}/*"]
+  }
 }
 
 resource "aws_iam_role_policy" "counter" {
@@ -61,6 +65,7 @@ resource "aws_lambda_function" "counter" {
     variables = {
       TABLE_NAME = aws_dynamodb_table.app.name
       JOBS_QUEUE_URL = aws_sqs_queue.jobs.url
+      UPLOADS_BUCKET = aws_s3_bucket.uploads.id
     }
   }
 
