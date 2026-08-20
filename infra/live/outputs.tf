@@ -13,3 +13,11 @@ output "site_bucket" {
 output "cloudfront_distribution_id" {
   value = aws_cloudfront_distribution.site.id
 }
+
+output "cognito_client_id" {
+  value = aws_cognito_user_pool_client.lab.id
+}
+
+output "cognito_user_pool_id" {
+  value = aws_cognito_user_pool.lab.id
+}

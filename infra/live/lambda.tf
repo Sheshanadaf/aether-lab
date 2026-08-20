@@ -27,7 +27,7 @@ data "aws_iam_policy_document" "counter" {
     resources = ["arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:*"]
   }
   statement {
-    actions   = ["dynamodb:UpdateItem", "dynamodb:GetItem"]
+    actions   = ["dynamodb:UpdateItem", "dynamodb:GetItem", "dynamodb:PutItem"]
     resources = [aws_dynamodb_table.app.arn]
   }
   statement {

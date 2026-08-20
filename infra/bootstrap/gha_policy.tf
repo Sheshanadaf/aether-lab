@@ -24,6 +24,7 @@ data "aws_iam_policy_document" "github_actions_deploy" {
       "iam:UpdateAssumeRolePolicy",
       "events:*",
       "sqs:*",
+      "cognito-idp:*",
     ]
     resources = ["*"]
   }

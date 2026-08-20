@@ -51,6 +51,10 @@ def lambda_handler(event, context):
     if method == "GET" and path.startswith("/uploads/"):
         upload_id = path.split("/uploads/", 1)[1]
         return _get_upload(upload_id, request_id)
+    if method == "GET" and path == "/quiz":
+        return _quiz_get(request_id)
+    if method == "POST" and path == "/quiz":
+        return _quiz_post(event, request_id)
     return _response(404, {"error": "not found"})
 
 
@@ -223,6 +227,112 @@ def _get_upload(upload_id, request_id):
                 "path": [
                     {"service": "Amazon API Gateway", "role": "GET /uploads/{id}"},
                     {"service": "Amazon DynamoDB", "role": "metadata stored"},
+                ],
+            },
+        },
+    )
+
+QUESTIONS = [
+    {
+        "id": "q1",
+        "prompt": "Why is the CloudFront origin bucket private?",
+        "choices": [
+            "Because S3 websites must be public",
+            "Origin Access Control lets only CloudFront read it",
+            "Lambda needs a public bucket",
+            "GitHub Actions uploads need a public ACL",
+        ],
+        "answer": 1,
+    },
+    {
+        "id": "q2",
+        "prompt": "How does GitHub Actions get AWS credentials in this project?",
+        "choices": [
+            "AKIA keys stored in GitHub Secrets",
+            "Root user keys on the runner",
+            "OIDC: GitHub proves the repo, STS gives a temporary role",
+            "The React app’s VITE_API_BASE contains an access key",
+        ],
+        "answer": 2,
+    },
+    {
+        "id": "q3",
+        "prompt": "After a poison SQS message fails three times, where does it go?",
+        "choices": ["SNS", "The site bucket", "The DLQ", "CloudFront"],
+        "answer": 2,
+    },
+    {
+        "id": "q4",
+        "prompt": "Why does the image upload skip API Gateway?",
+        "choices": [
+            "S3 cannot be private",
+            "A presigned PUT URL lets the browser talk to S3 directly",
+            "EventBridge cannot invoke Lambda",
+            "CloudFront Functions store files",
+        ],
+        "answer": 1,
+    },
+]
+
+
+def _quiz_get(request_id):
+    public = [
+        {"id": q["id"], "prompt": q["prompt"], "choices": q["choices"]} for q in QUESTIONS
+    ]
+    return _response(
+        200,
+        {
+            "questions": public,
+            "trace": {
+                "requestId": request_id,
+                "path": [
+                    {"service": "Amazon API Gateway", "role": "GET /quiz — no JWT"},
+                    {"service": "AWS Lambda", "role": "return questions, hide answers"},
+                ],
+            },
+        },
+    )
+
+
+def _quiz_post(event, request_id):
+    claims = (
+        ((event.get("requestContext") or {}).get("authorizer") or {})
+        .get("jwt", {})
+        .get("claims", {})
+    )
+    sub = claims.get("sub")
+    if not sub:
+        return _response(401, {"error": "missing jwt"})
+    raw = event.get("body") or "{}"
+    try:
+        body = json.loads(raw)
+    except json.JSONDecodeError:
+        body = {}
+    answers = body.get("answers") or {}
+    correct = 0
+    for q in QUESTIONS:
+        if answers.get(q["id"]) == q["answer"]:
+            correct += 1
+    dynamodb.Table(TABLE_NAME).put_item(
+        Item={
+            "pk": f"QUIZ#{sub}",
+            "sk": "RESULT",
+            "score": correct,
+            "outOf": len(QUESTIONS),
+        }
+    )
+    return _response(
+        200,
+        {
+            "score": correct,
+            "outOf": len(QUESTIONS),
+            "trace": {
+                "requestId": request_id,
+                "path": [
+                    {"service": "Amazon API Gateway", "role": "JWT authorizer — already passed"},
+                    {"service": "AWS Lambda", "role": f"score for sub {sub[:8]}…"},
+                    {"service": "Amazon DynamoDB", "role": "QUIZ#sub result"},
+                    {"service": "Amazon Cognito", "role": "user pool issued the IdToken"},
                 ],
             },
         },

@@ -5,7 +5,7 @@ resource "aws_apigatewayv2_api" "http" {
   cors_configuration {
     allow_origins = ["*"]
     allow_methods = ["GET", "POST", "OPTIONS"]
-    allow_headers = ["content-type"]
+    allow_headers = ["content-type", "authorization"]
     max_age       = 3600
   }
 }
@@ -59,4 +59,30 @@ resource "aws_apigatewayv2_route" "uploads_get" {
   api_id    = aws_apigatewayv2_api.http.id
   route_key = "GET /uploads/{id}"
   target    = "integrations/${aws_apigatewayv2_integration.counter.id}"
+}
+
+resource "aws_apigatewayv2_authorizer" "cognito" {
+  api_id           = aws_apigatewayv2_api.http.id
+  authorizer_type  = "JWT"
+  identity_sources = ["$request.header.Authorization"]
+  name             = "${var.project}-jwt"
+
+  jwt_configuration {
+    audience = [aws_cognito_user_pool_client.lab.id]
+    issuer   = "https://cognito-idp.${var.aws_region}.amazonaws.com/${aws_cognito_user_pool.lab.id}"
+  }
+}
+
+resource "aws_apigatewayv2_route" "quiz_get" {
+  api_id    = aws_apigatewayv2_api.http.id
+  route_key = "GET /quiz"
+  target    = "integrations/${aws_apigatewayv2_integration.counter.id}"
+}
+
+resource "aws_apigatewayv2_route" "quiz_post" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "POST /quiz"
+  target             = "integrations/${aws_apigatewayv2_integration.counter.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
 }
