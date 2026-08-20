@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import type { ReactNode } from "react";
 import { Tracer } from "./Tracer";
 
@@ -11,12 +11,14 @@ const links = [
 ];
 
 export function Layout({ children }: { children: ReactNode }) {
+  const labs = useLocation().pathname === "/labs";
+
   return (
-    <div className="shell">
+    <div className={`shell ${labs ? "shell-labs" : "shell-full"}`}>
       <div>
         <header className="nav">
           <NavLink to="/" className="brand">
-            Aether Lab <span>localhost</span>
+            Sheshan Hebron <span>live</span>
           </NavLink>
           <nav className="nav-links">
             {links.map((l) => (
@@ -31,9 +33,9 @@ export function Layout({ children }: { children: ReactNode }) {
             ))}
           </nav>
         </header>
-        <main className="main">{children}</main>
+        <main className={`main ${labs ? "" : "main-wide"}`}>{children}</main>
       </div>
-      <Tracer />
+      {labs ? <Tracer /> : null}
     </div>
   );
 }

@@ -5,23 +5,28 @@
   --text: #e8eefc;
   --muted: #8b9bb8;
   --accent: #3ee0b4;
-  --font: "Segoe UI", system-ui, sans-serif;
+  --font: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
 }
 
 * { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
   margin: 0;
   font-family: var(--font);
-  background: var(--bg);
+  background:
+    radial-gradient(900px 500px at 90% -10%, rgba(62, 224, 180, 0.12), transparent 55%),
+    radial-gradient(700px 400px at -10% 20%, rgba(110, 168, 255, 0.1), transparent 50%),
+    var(--bg);
   color: var(--text);
   line-height: 1.55;
 }
 a { color: var(--accent); }
 .shell {
   display: grid;
-  grid-template-columns: 1fr 300px;
   min-height: 100vh;
 }
+.shell-labs { grid-template-columns: 1fr 300px; }
+.shell-full { grid-template-columns: 1fr; }
 .nav {
   display: flex;
   justify-content: space-between;
@@ -30,11 +35,18 @@ a { color: var(--accent); }
   padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--line);
   flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(7, 11, 18, 0.82);
+  backdrop-filter: blur(12px);
 }
 .brand {
   color: var(--text);
   text-decoration: none;
   font-weight: 700;
+  font-family: Outfit, var(--font);
+  white-space: nowrap;
 }
 .brand span { color: var(--accent); font-size: 0.75rem; margin-left: 0.5rem; }
 .nav-links { display: flex; gap: 0.4rem; flex-wrap: wrap; }
@@ -46,7 +58,8 @@ a { color: var(--accent); }
 }
 .nav-links a.active,
 .nav-links a:hover { color: var(--text); background: var(--card); }
-.main { padding: 1.5rem; max-width: 720px; }
+.main { padding: 1.5rem 2rem; max-width: 720px; }
+.main-wide { max-width: 1120px; width: 100%; margin-inline: auto; }
 .kicker {
   color: var(--accent);
   font-size: 0.75rem;
@@ -57,7 +70,12 @@ a { color: var(--accent); }
 .tracer {
   border-left: 1px solid var(--line);
   padding: 1rem;
-  background: #0e1522;
+  background: rgba(14, 21, 34, 0.92);
+  position: sticky;
+  top: 0;
+  align-self: start;
+  max-height: 100vh;
+  overflow: auto;
 }
 .tracer h2 { font-size: 1rem; }
 .tracer p { color: var(--muted); font-size: 0.9rem; }
@@ -73,8 +91,13 @@ a { color: var(--accent); }
 .hop p { margin: 0.2rem 0 0; }
 
 @media (max-width: 900px) {
-  .shell { grid-template-columns: 1fr; }
-  .tracer { border-left: 0; border-top: 1px solid var(--line); }
+  .shell-labs { grid-template-columns: 1fr; }
+  .tracer {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    position: relative;
+    max-height: none;
+  }
 }
 
 button {
