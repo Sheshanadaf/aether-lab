@@ -1,0 +1,81 @@
+name: Deploy Aether Lab
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-south-1
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build
+        working-directory: frontend
+        run: |
+          echo "VITE_API_BASE=${{ secrets.VITE_API_BASE }}" > .env.production
+          npm ci
+          npm run build
+
+  terraform:
+    needs: [frontend]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/live
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.11.4"
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Write backend.hcl
+        run: |
+          cat > backend.hcl <<EOF
+          bucket         = "${{ secrets.TF_STATE_BUCKET }}"
+          key            = "live/terraform.tfstate"
+          region         = "ap-south-1"
+          dynamodb_table = "${{ secrets.TF_LOCK_TABLE }}"
+          encrypt        = true
+          EOF
+      - name: Terraform init and apply
+        run: |
+          terraform init -backend-config=backend.hcl -input=false
+          terraform apply -auto-approve -input=false
+      - name: Outputs
+        id: out
+        run: |
+          echo "bucket=$(terraform output -raw site_bucket)" >> "$GITHUB_OUTPUT"
+          echo "dist=$(terraform output -raw cloudfront_distribution_id)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build frontend for S3
+        working-directory: frontend
+        run: |
+          echo "VITE_API_BASE=${{ secrets.VITE_API_BASE }}" > .env.production
+          npm ci
+          npm run build
+      - name: Sync S3 and invalidate CloudFront
+        working-directory: .
+        run: |
+          aws s3 sync frontend/dist "s3://${{ steps.out.outputs.bucket }}" --delete
+          aws s3 cp frontend/dist/index.html "s3://${{ steps.out.outputs.bucket }}/index.html" --cache-control "no-cache"
+          aws cloudfront create-invalidation --distribution-id "${{ steps.out.outputs.dist }}" --paths "/*"
