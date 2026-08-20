@@ -30,6 +30,10 @@ data "aws_iam_policy_document" "counter" {
     actions   = ["dynamodb:UpdateItem", "dynamodb:GetItem"]
     resources = [aws_dynamodb_table.app.arn]
   }
+  statement {
+    actions   = ["sqs:SendMessage"]
+    resources = [aws_sqs_queue.jobs.arn]
+  }
 }
 
 resource "aws_iam_role_policy" "counter" {
@@ -56,6 +60,7 @@ resource "aws_lambda_function" "counter" {
   environment {
     variables = {
       TABLE_NAME = aws_dynamodb_table.app.name
+      JOBS_QUEUE_URL = aws_sqs_queue.jobs.url
     }
   }
 

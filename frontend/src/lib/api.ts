@@ -35,3 +35,36 @@ export async function incrementVisits(): Promise<VisitResponse> {
   }
   return res.json() as Promise<VisitResponse>;
 }
+
+export type JobResponse = {
+  jobId: string;
+  status: string;
+  message?: string;
+  trace: Trace;
+};
+
+export async function submitJob(body: { message?: string; poison?: boolean }): Promise<JobResponse> {
+  if (!BASE) {
+    throw new Error("VITE_API_BASE is missing.");
+  }
+  const res = await fetch(`${BASE}/jobs`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    throw new Error(`API ${res.status}`);
+  }
+  return res.json() as Promise<JobResponse>;
+}
+
+export async function getJob(jobId: string): Promise<JobResponse> {
+  if (!BASE) {
+    throw new Error("VITE_API_BASE is missing.");
+  }
+  const res = await fetch(`${BASE}/jobs/${jobId}`);
+  if (!res.ok) {
+    throw new Error(`API ${res.status}`);
+  }
+  return res.json() as Promise<JobResponse>;
+}

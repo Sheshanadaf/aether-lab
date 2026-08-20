@@ -10,7 +10,7 @@ You already created the role:
 
 It **cannot deploy yet** (identity only). This step attaches a **policy**, then a **workflow**.
 
-Repo on GitHub must match bootstrap `github_owner` / `github_repo` (e.g. `Sheshanadaf/aether-lab`). If the GitHub repo name is different, `AssumeRole` will fail. Check `infra/bootstrap/terraform.tfvars`.
+Repo on GitHub must match bootstrap `github_owner` / `github_repo` (e.g. `Sheshanadaf/aether-lab`). Repos created **after 15 Jul 2026** also send numeric IDs in the OIDC `sub` (`repo:Sheshanadaf@115085953/aether-lab@1339776175:...`). The trust policy must allow that shape, not only the old `repo:owner/repo:*` string.
 
 ---
 
@@ -229,7 +229,7 @@ GitHub → **Actions** tab → open the run.
 
 | Error | Meaning |
 |---|---|
-| `Not authorized to perform sts:AssumeRoleWithWebIdentity` | Repo name ≠ `github_owner/github_repo`, or branch is not `main`, or missing `id-token: write` |
+| `Not authorized to perform sts:AssumeRoleWithWebIdentity` | IAM trust `sub` ≠ the GitHub token. New GitHub repos use `repo:OWNER@OWNER_ID/REPO@REPO_ID:ref:...` (CloudTrail username). Trust must include that pattern, not only `repo:OWNER/REPO:*`. Re-apply bootstrap after changing `oidc.tf`. Do **not** add access keys. |
 | `AccessDenied` on S3/Lambda | Part A policy not applied |
 | `npm ci` fails | No `frontend/package-lock.json` — run `npm install` in `frontend` and commit the lockfile |
 | Backend init error | Secrets `TF_STATE_BUCKET` / `TF_LOCK_TABLE` typos |

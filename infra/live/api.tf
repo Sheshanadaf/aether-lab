@@ -36,3 +36,15 @@ resource "aws_lambda_permission" "apigw" {
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.http.execution_arn}/*/*"
 }
+
+resource "aws_apigatewayv2_route" "jobs_post" {
+  api_id    = aws_apigatewayv2_api.http.id
+  route_key = "POST /jobs"
+  target    = "integrations/${aws_apigatewayv2_integration.counter.id}"
+}
+
+resource "aws_apigatewayv2_route" "jobs_get" {
+  api_id    = aws_apigatewayv2_api.http.id
+  route_key = "GET /jobs/{id}"
+  target    = "integrations/${aws_apigatewayv2_integration.counter.id}"
+}

@@ -27,8 +27,10 @@ data "aws_iam_policy_document" "gha_trust" {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
       values = [
-        "repo:${var.github_owner}/${var.github_repo}:ref:refs/heads/main",
-        "repo:${var.github_owner}/${var.github_repo}:pull_request",
+        # Classic claim (older repos)
+        "repo:${var.github_owner}/${var.github_repo}:*",
+        # Immutable claim (repos created after 15 Jul 2026)
+        "repo:${var.github_owner}@${var.github_owner_id}/${var.github_repo}@${var.github_repo_id}:*",
       ]
     }
   }
