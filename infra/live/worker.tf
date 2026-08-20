@@ -23,8 +23,16 @@ data "aws_iam_policy_document" "worker" {
       "sqs:ReceiveMessage",
       "sqs:DeleteMessage",
       "sqs:GetQueueAttributes",
+      "sqs:ChangeMessageVisibility",
     ]
     resources = [aws_sqs_queue.jobs.arn]
+  }
+  statement {
+    actions = [
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+    ]
+    resources = ["*"]
   }
 }
 
@@ -56,6 +64,10 @@ resource "aws_lambda_function" "worker" {
   }
 
   depends_on = [aws_cloudwatch_log_group.worker]
+
+  tracing_config {
+    mode = "Active"
+  }
 }
 
 resource "aws_lambda_event_source_mapping" "jobs" {

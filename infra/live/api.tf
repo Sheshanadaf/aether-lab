@@ -23,12 +23,6 @@ resource "aws_apigatewayv2_route" "visits" {
   target    = "integrations/${aws_apigatewayv2_integration.counter.id}"
 }
 
-resource "aws_apigatewayv2_stage" "default" {
-  api_id      = aws_apigatewayv2_api.http.id
-  name        = "$default"
-  auto_deploy = true
-}
-
 resource "aws_lambda_permission" "apigw" {
   statement_id  = "AllowAPIGateway"
   action        = "lambda:InvokeFunction"
@@ -85,4 +79,30 @@ resource "aws_apigatewayv2_route" "quiz_post" {
   target             = "integrations/${aws_apigatewayv2_integration.counter.id}"
   authorization_type = "JWT"
   authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_stage" "default" {
+  api_id      = aws_apigatewayv2_api.http.id
+  name        = "$default"
+  auto_deploy = true
+
+  default_route_settings {
+    throttling_burst_limit     = 20
+    throttling_rate_limit      = 10
+    detailed_metrics_enabled   = true
+  }
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.http_api.arn
+    format = jsonencode({
+      requestId        = "$context.requestId"
+      httpMethod       = "$context.httpMethod"
+      path             = "$context.path"
+      status           = "$context.status"
+      responseLatency  = "$context.responseLatency"
+      error            = "$context.error.message"
+    })
+  }
+
+  depends_on = [aws_cloudwatch_log_resource_policy.http_api]
 }

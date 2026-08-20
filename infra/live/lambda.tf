@@ -38,6 +38,13 @@ data "aws_iam_policy_document" "counter" {
     actions   = ["s3:PutObject"]
     resources = ["${aws_s3_bucket.uploads.arn}/*"]
   }
+  statement {
+    actions = [
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "counter" {
@@ -70,4 +77,8 @@ resource "aws_lambda_function" "counter" {
   }
 
   depends_on = [aws_cloudwatch_log_group.counter]
+
+  tracing_config {
+    mode = "Active"
+  }
 }

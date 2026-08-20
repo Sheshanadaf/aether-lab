@@ -22,6 +22,13 @@ data "aws_iam_policy_document" "upload" {
     actions   = ["s3:GetObject", "s3:HeadObject"]
     resources = ["${aws_s3_bucket.uploads.arn}/*"]
   }
+  statement {
+    actions = [
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "upload" {
@@ -52,6 +59,10 @@ resource "aws_lambda_function" "upload" {
   }
 
   depends_on = [aws_cloudwatch_log_group.upload]
+
+  tracing_config {
+    mode = "Active"
+  }
 }
 
 resource "aws_cloudwatch_event_rule" "upload_created" {
