@@ -9,9 +9,14 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
 body {
   margin: 0;
+  max-width: 100%;
+  overflow-x: hidden;
   font-family: var(--font);
   background:
     radial-gradient(900px 500px at 90% -10%, rgba(62, 224, 180, 0.12), transparent 55%),
@@ -24,9 +29,12 @@ a { color: var(--accent); }
 .shell {
   display: grid;
   min-height: 100vh;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 .shell-labs { grid-template-columns: 1fr 300px; }
 .shell-full { grid-template-columns: 1fr; }
+.shell-full > div { width: 100%; min-width: 0; }
 .nav {
   display: flex;
   justify-content: space-between;
@@ -49,17 +57,23 @@ a { color: var(--accent); }
   white-space: nowrap;
 }
 .brand span { color: var(--accent); font-size: 0.75rem; margin-left: 0.5rem; }
-.nav-links { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.nav-links { display: flex; gap: 0.25rem; flex-wrap: wrap; }
 .nav-links a {
   color: var(--muted);
   text-decoration: none;
-  padding: 0.3rem 0.65rem;
+  padding: 0.3rem 0.55rem;
   border-radius: 999px;
+  font-size: 0.92rem;
 }
 .nav-links a.active,
 .nav-links a:hover { color: var(--text); background: var(--card); }
 .main { padding: 1.5rem 2rem; max-width: 720px; }
 .main-wide { max-width: 1120px; width: 100%; margin-inline: auto; }
+.main-home {
+  max-width: none;
+  width: 100%;
+  padding: 0 0 2.5rem;
+}
 .kicker {
   color: var(--accent);
   font-size: 0.75rem;

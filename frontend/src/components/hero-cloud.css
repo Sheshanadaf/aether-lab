@@ -1,0 +1,173 @@
+.hero-viz {
+  --mx: 50%;
+  --my: 42%;
+  position: relative;
+  grid-area: viz;
+  width: min(400px, 38vw);
+  min-width: 0;
+  max-width: 100%;
+  height: min(48vh, 380px);
+  min-height: 300px;
+  overflow: visible;
+  background: transparent;
+}
+
+.hv-cursor {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  left: var(--mx);
+  top: var(--my);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(62, 224, 180, 0.1), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  transition: left 0.18s ease, top 0.18s ease;
+}
+
+.hv-scene {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  background: transparent;
+}
+
+.hv-aws-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  max-height: 380px;
+}
+
+.aws-line {
+  fill: none;
+  stroke: rgba(62, 224, 180, 0.42);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+}
+
+.hv-teach {
+  display: grid;
+  grid-template-columns: 1.5fr 0.72fr;
+  align-items: center;
+  gap: 0.2rem;
+  width: 100%;
+  height: 100%;
+}
+
+.hv-teacher {
+  z-index: 0;
+  width: 100%;
+  max-width: 100%;
+  height: 118%;
+  max-height: 440px;
+  object-fit: contain;
+  object-position: left center;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transform: scale(1);
+  transform-origin: left center;
+}
+
+.hv-teach-board {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.hv-teach-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.hv-yt {
+  position: absolute;
+  top: 11%;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: max-content;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  padding: 0.28rem 0.62rem 0.28rem 0.42rem;
+  border-radius: 999px;
+  background: #0d1118;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f4f7fb;
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+}
+
+.hv-yt:hover {
+  border-color: rgba(255, 0, 0, 0.55);
+}
+
+.hv-yt-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.aws-tile {
+  fill: rgba(7, 11, 18, 0.45);
+  stroke: rgba(232, 238, 252, 0.16);
+  stroke-width: 1;
+}
+
+.aws-label {
+  fill: #8b9bb8;
+  font-size: 9px;
+  text-anchor: middle;
+  font-family: var(--font);
+}
+
+.aws-label.is-side {
+  text-anchor: start;
+}
+
+.aws-group {
+  fill: transparent;
+  stroke: rgba(62, 224, 180, 0.3);
+  stroke-width: 1;
+  stroke-dasharray: 4 3.5;
+}
+
+.aws-group-label {
+  fill: #8b9bb8;
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-family: var(--font);
+}
+
+.aws-hop {
+  fill: var(--accent);
+  filter: drop-shadow(0 0 4px rgba(62, 224, 180, 0.55));
+}
+
+@media (max-width: 1100px) {
+  .hero-viz {
+    min-width: 0;
+    width: min(400px, 100%);
+    min-height: 280px;
+    height: 300px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-cursor { animation: none; transition: none; }
+}

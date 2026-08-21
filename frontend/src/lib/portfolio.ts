@@ -11,6 +11,29 @@ export const LINKS = {
   ccp: "https://www.credly.com/badges/42e6b4ed-a42b-4ae2-ad0c-5f785bbe29ed/linked_in_profile",
 };
 
+export type ShareItem = {
+  href: string;
+  title: string;
+  thumb: string;
+};
+
+function yt(id: string, title: string): ShareItem {
+  return {
+    href: `https://youtu.be/${id}`,
+    title,
+    thumb: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+  };
+}
+
+export const SHARE_YOUTUBE: ShareItem[] = [
+  yt("1kxbcddcz30", "AWS Full Course Sinhala | Complete Beginner Roadmap"),
+  yt("zY80Wq-aJwo", "Serverless and small AWS Serverless Demo"),
+  yt("6er4gzglUt4", "Hosted a machine learning application completely on AWS"),
+  yt("qfZjqsqn-BU", "AWS Global Infrastructure Explained Sinhala | Regions, AZs & Edge Locations | Lesson 01"),
+  yt("G-KzUGkXZGE", "AWS EC2 Sinhala Tutorial | Placement Groups, ENI & EC2 Hibernate Explained | Lesson 3 - Part 04"),
+  yt("Rx4RZ0FWP2Y", "AWS EC2 Sinhala Tutorial | Elastic IP & EC2 Purchasing Options Explained | Lesson 3 - Part 03"),
+];
+
 export type SkillLogo = {
   name: string;
   src: string;

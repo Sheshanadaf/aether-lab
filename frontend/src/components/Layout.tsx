@@ -1,17 +1,37 @@
-import { NavLink, useLocation } from "react-router-dom";
-import type { ReactNode } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { useEffect, type ReactNode } from "react";
 import { Tracer } from "./Tracer";
 
 const links = [
-  { to: "/", label: "About" },
-  { to: "/labs", label: "Labs" },
-  { to: "/atlas", label: "Atlas" },
-  { to: "/pillars", label: "Six pillars" },
-  { to: "/ship", label: "How it ships" },
+  { to: "/", hash: "", label: "Home" },
+  { to: "/", hash: "about", label: "About" },
+  { to: "/labs", hash: "", label: "Cloud Playground" },
+  { to: "/", hash: "projects", label: "Projects" },
+  { to: "/", hash: "experience", label: "Experience" },
+  { to: "/", hash: "contact", label: "Contact me" },
 ];
 
+function isCurrent(pathname: string, hash: string, item: (typeof links)[number]) {
+  if (item.to === "/labs") return pathname === "/labs";
+  if (pathname !== "/") return false;
+  const section = hash.replace("#", "");
+  if (!item.hash) return section === "" || section === "top";
+  return section === item.hash;
+}
+
 export function Layout({ children }: { children: ReactNode }) {
-  const labs = useLocation().pathname === "/labs";
+  const location = useLocation();
+  const labs = location.pathname === "/labs";
+
+  useEffect(() => {
+    if (location.pathname !== "/") return;
+    if (location.hash) {
+      const el = document.getElementById(location.hash.slice(1));
+      el?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location.pathname, location.hash]);
 
   return (
     <div className={`shell ${labs ? "shell-labs" : "shell-full"}`}>
@@ -22,18 +42,19 @@ export function Layout({ children }: { children: ReactNode }) {
           </NavLink>
           <nav className="nav-links">
             {links.map((l) => (
-              <NavLink
-                key={l.to}
-                to={l.to}
-                end={l.to === "/"}
-                className={({ isActive }) => (isActive ? "active" : "")}
+              <Link
+                key={l.label}
+                to={{ pathname: l.to, hash: l.hash }}
+                className={isCurrent(location.pathname, location.hash, l) ? "active" : ""}
               >
                 {l.label}
-              </NavLink>
+              </Link>
             ))}
           </nav>
         </header>
-        <main className={`main ${labs ? "" : "main-wide"}`}>{children}</main>
+        <main className={`main ${labs ? "" : "main-wide"} ${location.pathname === "/" ? "main-home" : ""}`}>
+          {children}
+        </main>
       </div>
       {labs ? <Tracer /> : null}
     </div>
