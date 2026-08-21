@@ -880,7 +880,7 @@
   border: 0;
   background:
     radial-gradient(820px 260px at 8% 28%, rgba(80, 140, 255, 0.055), transparent 60%),
-    linear-gradient(180deg, transparent 0%, #081018 20%, #081018 80%, transparent 100%);
+    linear-gradient(180deg, transparent 0%, #0b131c 20%, #0b131c 80%, transparent 100%);
 }
 
 .projects-band-inner {
