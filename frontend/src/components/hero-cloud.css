@@ -3,19 +3,20 @@
   --my: 42%;
   position: relative;
   grid-area: viz;
-  width: min(400px, 38vw);
+  width: min(100%, 400px);
   min-width: 0;
   max-width: 100%;
-  height: min(48vh, 380px);
-  min-height: 300px;
+  aspect-ratio: 1;
+  height: auto;
   overflow: visible;
-  background: transparent;
+  background: none;
+  isolation: auto;
 }
 
 .hv-cursor {
   position: absolute;
-  width: 180px;
-  height: 180px;
+  width: 160px;
+  height: 160px;
   left: var(--mx);
   top: var(--my);
   transform: translate(-50%, -50%);
@@ -33,14 +34,15 @@
   height: 100%;
   display: grid;
   place-items: center;
-  background: transparent;
+  background: none;
 }
 
 .hv-aws-svg {
   width: 100%;
   height: 100%;
   overflow: visible;
-  max-height: 380px;
+  background: none;
+  display: block;
 }
 
 .aws-line {
@@ -57,6 +59,7 @@
   gap: 0.2rem;
   width: 100%;
   height: 100%;
+  background: none;
 }
 
 .hv-teacher {
@@ -80,12 +83,14 @@
   height: 100%;
   display: grid;
   place-items: center;
+  background: none;
 }
 
 .hv-teach-svg {
   width: 100%;
   height: 100%;
   overflow: visible;
+  background: none;
 }
 
 .hv-yt {
@@ -123,8 +128,8 @@
 }
 
 .aws-tile {
-  fill: rgba(7, 11, 18, 0.45);
-  stroke: rgba(232, 238, 252, 0.16);
+  fill: none;
+  stroke: rgba(232, 238, 252, 0.22);
   stroke-width: 1;
 }
 
@@ -140,7 +145,7 @@
 }
 
 .aws-group {
-  fill: transparent;
+  fill: none;
   stroke: rgba(62, 224, 180, 0.3);
   stroke-width: 1;
   stroke-dasharray: 4 3.5;
@@ -156,15 +161,11 @@
 
 .aws-hop {
   fill: var(--accent);
-  filter: drop-shadow(0 0 4px rgba(62, 224, 180, 0.55));
 }
 
 @media (max-width: 1100px) {
   .hero-viz {
-    min-width: 0;
-    width: min(400px, 100%);
-    min-height: 280px;
-    height: 300px;
+    width: min(320px, 100%);
   }
 }
 

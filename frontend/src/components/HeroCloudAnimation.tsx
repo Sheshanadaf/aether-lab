@@ -148,7 +148,7 @@ function UserGlyph() {
 
 function DesignScene({ reduced }: { reduced?: boolean }) {
   return (
-    <svg className="hv-aws-svg" viewBox="0 0 360 360" preserveAspectRatio="xMidYMid meet" aria-hidden>
+    <svg className="hv-aws-svg" viewBox="0 0 360 360" preserveAspectRatio="xMidYMid meet" aria-hidden style={{ background: "none" }}>
       <AwsGroup x={118} y={68} w={150} h={112} label="Edge" delay={t(reduced, 1.4)} />
       <AwsGroup x={36} y={208} w={288} h={56} label="Compute" delay={t(reduced, 2.15)} />
       <AwsGroup x={36} y={290} w={288} h={56} label="Data" delay={t(reduced, 2.85)} />
@@ -176,7 +176,7 @@ function DesignScene({ reduced }: { reduced?: boolean }) {
 
 function AutomateScene({ reduced }: { reduced?: boolean }) {
   return (
-    <svg className="hv-aws-svg" viewBox="0 0 360 360" preserveAspectRatio="xMidYMid meet" aria-hidden>
+    <svg className="hv-aws-svg" viewBox="0 0 360 360" preserveAspectRatio="xMidYMid meet" aria-hidden style={{ background: "none" }}>
       <AwsGroup x={16} y={62} w={96} h={92} label="Source" delay={t(reduced, 0.7)} />
       <AwsGroup x={130} y={62} w={214} h={92} label="Build" delay={t(reduced, 1.5)} />
       <AwsGroup x={16} y={204} w={328} h={92} label="Deploy" delay={t(reduced, 2.75)} />
@@ -222,9 +222,9 @@ function TeachScene({ reduced }: { reduced?: boolean }) {
           transition={{ duration: 0.35, delay: t(reduced, 0.35) }}
         >
           <YouTubeIcon className="hv-yt-icon" />
-          <span>AWS on YouTube</span>
+          <span>Learn</span>
         </motion.a>
-        <svg className="hv-teach-svg" viewBox="0 0 180 300" aria-hidden>
+        <svg className="hv-teach-svg" viewBox="0 0 180 300" aria-hidden style={{ background: "none" }}>
           <AwsGroup x={8} y={18} w={164} h={268} label="AWS" delay={t(reduced, 0.45)} />
           <AwsNode x={42} y={62} href="/skills/cloudfront.svg" label="CloudFront" delay={t(reduced, 0.75)} align="right" />
           <AwsNode x={42} y={122} href="/skills/lambda.svg" label="Lambda" delay={t(reduced, 1.1)} align="right" />
@@ -261,6 +261,7 @@ export function HeroCloudAnimation({ stage, reduced }: { stage: HeroStage; reduc
         <motion.div
           key={shown}
           className="hv-scene"
+          style={{ background: "none" }}
           initial={reduced ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
