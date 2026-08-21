@@ -838,17 +838,49 @@
   background: linear-gradient(270deg, rgba(62, 224, 180, 0.55), transparent);
 }
 
+#skills::before,
+#experience::before,
+#contact::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  top: -3rem;
+  bottom: -3rem;
+  left: 50%;
+  width: 100vw;
+  max-width: 100vw;
+  transform: translateX(-50%);
+  z-index: -1;
+}
+
+#skills::before {
+  background:
+    radial-gradient(720px 240px at 10% 18%, rgba(62, 224, 180, 0.045), transparent 64%),
+    linear-gradient(180deg, transparent 0%, #070d14 22%, #070d14 78%, transparent 100%);
+}
+
+#experience::before {
+  background:
+    radial-gradient(680px 220px at 86% 42%, rgba(110, 168, 255, 0.04), transparent 62%),
+    linear-gradient(180deg, transparent 0%, #070c13 22%, #070c13 78%, transparent 100%);
+}
+
+#contact::before {
+  background:
+    radial-gradient(760px 260px at 50% 110%, rgba(62, 224, 180, 0.05), transparent 62%),
+    linear-gradient(180deg, transparent 0%, #070b12 18%, #070b12 100%);
+}
+
 .home-section.projects-band {
   max-width: none;
   width: 100%;
-  margin-top: 3.6rem;
+  margin-top: 1.4rem;
   padding: 0;
   overflow-x: clip;
+  border: 0;
   background:
-    radial-gradient(820px 260px at 8% 0%, rgba(80, 140, 255, 0.09), transparent 58%),
-    #0a1322;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
+    radial-gradient(820px 260px at 8% 28%, rgba(80, 140, 255, 0.055), transparent 60%),
+    linear-gradient(180deg, transparent 0%, #081018 20%, #081018 80%, transparent 100%);
 }
 
 .projects-band-inner {
@@ -981,14 +1013,13 @@
 .home-section.writing-band {
   max-width: none;
   width: 100%;
-  margin-top: 3.6rem;
+  margin-top: 1.4rem;
   padding: 0;
   overflow-x: clip;
+  border: 0;
   background:
-    radial-gradient(780px 240px at 88% 0%, rgba(62, 224, 180, 0.05), transparent 58%),
-    #0b121c;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
+    radial-gradient(780px 240px at 88% 30%, rgba(62, 224, 180, 0.04), transparent 60%),
+    linear-gradient(180deg, transparent 0%, #08141a 20%, #08141a 80%, transparent 100%);
 }
 
 .writing-band-inner {
