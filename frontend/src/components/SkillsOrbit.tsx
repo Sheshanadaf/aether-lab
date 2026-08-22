@@ -60,6 +60,11 @@ export function SkillsOrbit() {
       const hubEl = hub.current;
       if (!root || !hubEl) return;
 
+      if (window.matchMedia("(max-width: 720px)").matches) {
+        setPaths([]);
+        return;
+      }
+
       const saved = {
         rx: root.style.getPropertyValue("--rx"),
         ry: root.style.getPropertyValue("--ry"),

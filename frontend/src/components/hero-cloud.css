@@ -169,6 +169,13 @@
   }
 }
 
+@media (max-width: 720px) {
+  .hero-viz {
+    width: min(360px, 100%);
+    justify-self: center;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hv-cursor { animation: none; transition: none; }
 }

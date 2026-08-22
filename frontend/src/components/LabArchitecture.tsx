@@ -121,7 +121,7 @@ export function orderQuizHops(path: Hop[]): Hop[] {
   const gw = rest.findIndex((hop) => name(hop).includes("api gateway"));
   const placed = cognito.map((hop) => ({
     ...hop,
-    role: "JWT issuer — checked before Lambda runs",
+    role: "JWT issuer | checked before Lambda runs",
   }));
   if (gw < 0) return [...placed, ...rest];
   return [...rest.slice(0, gw + 1), ...placed, ...rest.slice(gw + 1)];
@@ -289,23 +289,31 @@ function Svc({ hop, fail }: { hop: Hop; fail?: boolean }) {
 function FlowArrow({
   down,
   back,
+  up,
   live,
   fail,
   label,
 }: {
   down?: boolean;
   back?: boolean;
+  up?: boolean;
   live: boolean;
   fail?: boolean;
   label?: string;
 }) {
+  const vertical = Boolean(down || up);
   return (
     <span
-      className={`lab-arrow${down ? " is-down" : ""}${back ? " is-back" : ""}${live ? " is-now" : ""}${fail ? " is-fail" : ""}`}
+      className={`lab-arrow${vertical ? " is-down" : ""}${up ? " is-up" : ""}${back ? " is-back" : ""}${live ? " is-now" : ""}${fail ? " is-fail" : ""}`}
       aria-hidden
     >
       {label ? <em className="lab-async">{label}</em> : null}
-      {down ? (
+      {vertical ? (
+        <svg viewBox="0 0 16 52" fill="none">
+          <path d="M8 4 V40" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path d="M3 36 L8 46 L13 36" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ) : back ? (
         <svg viewBox="0 0 16 52" fill="none">
           <path d="M8 4 V40" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           <path d="M3 36 L8 46 L13 36" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -335,19 +343,39 @@ function isGetQuizPath(path: Hop[]) {
   );
 }
 
+function usePhone() {
+  const [phone, setPhone] = useState(false);
+
+  useLayoutEffect(() => {
+    const mq = window.matchMedia("(max-width: 720px)");
+    const sync = () => setPhone(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  return phone;
+}
+
 function PathRow({
   hops,
   travel,
+  vertical = false,
 }: {
   hops: Hop[];
   travel: number;
+  vertical?: boolean;
 }) {
   return (
-    <div className="lab-flow-row">
+    <div className={`lab-flow-row${vertical ? " is-vert" : ""}`}>
       {hops.map((hop, index) => (
         <Fragment key={`q-${hop.service}-${index}`}>
           {index > 0 ? (
-            <FlowArrow live={travel === index - 1} label={asyncLabel(hops[index - 1], hop)} />
+            <FlowArrow
+              down={vertical}
+              live={travel === index - 1}
+              label={asyncLabel(hops[index - 1], hop)}
+            />
           ) : null}
           <Svc hop={hop} />
         </Fragment>
@@ -392,6 +420,7 @@ export function LabArchitecture({
       shown.some((hop) => /eventbridge/i.test(hop.service)),
   );
   const special = poisonLayout || quizLayout || uploadLayout;
+  const phone = usePhone();
   const main = poisonLayout ? shown.slice(0, dlqAt) : shown;
   const { ref, perRow } = usePerRow(special ? main.length : shown.length);
   const first = (special ? main : shown).slice(0, perRow);
@@ -453,45 +482,81 @@ export function LabArchitecture({
         {!shown.length ? (
           <p className="lab-empty">Run the activity to see the request come alive.</p>
         ) : quizLayout ? (
-          <div className="lab-flow is-quiz">
+          <div className={`lab-flow is-quiz${phone ? " is-vert" : ""}`}>
             {quizGet.length >= 2 ? (
               <div className="lab-quiz-path">
                 <p className="lab-path-label">GET /quiz · public — read questions</p>
-                <PathRow hops={quizGet} travel={quizGetOnly ? getTravel : -1} />
+                <PathRow hops={quizGet} travel={quizGetOnly ? getTravel : -1} vertical={phone} />
               </div>
             ) : null}
             {quizPost.length >= 3 ? (
               <div className="lab-quiz-path">
                 <p className="lab-path-label">POST /quiz · Cognito JWT — submit answers</p>
-                <PathRow hops={quizPost} travel={postTravel} />
+                <PathRow hops={quizPost} travel={postTravel} vertical={phone} />
               </div>
             ) : null}
           </div>
         ) : uploadLayout ? (
-          <div className="lab-flow is-upload">
+          <div className={`lab-flow is-upload${phone ? " is-vert" : ""}`}>
             <div className="lab-upload-presign">
+              <p className="lab-path-label lab-path-label-phone">POST /uploads · presign</p>
               <Svc hop={shown[0]} />
               <div className="lab-upload-io">
-                <FlowArrow live={uploadStep === 0} label="POST /uploads" />
-                <FlowArrow back live={uploadStep === 1} label="presigned URL" />
+                <FlowArrow down={phone} live={uploadStep === 0} label="POST /uploads" />
+                <FlowArrow back={!phone} up={phone} live={uploadStep === 1} label="presigned URL" />
               </div>
               <Svc hop={shown[1]} />
             </div>
             <div className="lab-upload-put">
+              <p className="lab-path-label lab-path-label-phone">Browser PUT · record</p>
               <Svc hop={shown[2]} />
               <div className={`lab-upload-late${uploadStep >= 2 ? "" : " is-off"}`}>
-                <FlowArrow live={uploadStep === 2} label="PUT" />
+                <FlowArrow down={phone} live={uploadStep === 2} label="PUT" />
                 <Svc hop={shown[3]} />
-                <FlowArrow live={uploadStep === 3} label="Event" />
+                <FlowArrow down={phone} live={uploadStep === 3} label="Event" />
                 <Svc hop={shown[4]} />
-                <FlowArrow live={uploadStep === 4} label="Async" />
+                <FlowArrow down={phone} live={uploadStep === 4} label="Async" />
                 <Svc hop={shown[5]} />
-                <FlowArrow live={uploadStep === 5} />
+                <FlowArrow down={phone} live={uploadStep === 5} />
                 <Svc hop={shown[6]} />
               </div>
             </div>
           </div>
         ) : poisonLayout ? (
+          phone ? (
+          <div className="lab-flow is-poison is-vert">
+            <div className="lab-poison-mobile">
+              <div className="lab-poison-gw">
+                <Svc hop={shown[0]} />
+              </div>
+              <div className="lab-poison-a1">
+                <FlowArrow down live={poisonStep === 0} label={asyncLabel(shown[0], shown[1])} />
+              </div>
+              <div className="lab-poison-enq">
+                <Svc hop={shown[1]} />
+              </div>
+              <div className="lab-poison-a2">
+                <FlowArrow down live={poisonStep === 1} label={asyncLabel(shown[1], shown[2])} />
+              </div>
+              <div className="lab-poison-sqs">
+                <Svc hop={{ ...shown[2], role: poisonSqsRole(poisonStep) }} fail={tryN > 0} />
+              </div>
+              <div className="lab-poison-redrive">
+                <FlowArrow live={toDlq} fail label="SQS redrive" />
+              </div>
+              <div className="lab-poison-dlq">
+                <Svc hop={shown[4]} fail />
+              </div>
+              <div className="lab-poison-io">
+                <FlowArrow down live={toWorker} fail />
+                <FlowArrow up live={backToSqs} fail />
+              </div>
+              <div className="lab-poison-worker">
+                <Svc hop={shown[3]} fail={tryN > 0} />
+              </div>
+            </div>
+          </div>
+          ) : (
           <div className="lab-flow is-poison">
             <div className="lab-flow-row">
               <Svc hop={shown[0]} />
@@ -514,6 +579,7 @@ export function LabArchitecture({
               <Svc hop={shown[4]} fail />
             </div>
           </div>
+          )
         ) : (
           <div className="lab-flow">
             <div className="lab-flow-row">

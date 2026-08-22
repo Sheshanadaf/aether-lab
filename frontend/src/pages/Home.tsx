@@ -151,6 +151,9 @@ export function HomePage() {
           <div className="hero-portrait">
             <img src="/sheshan.png?v=5" alt="Sheshan Hebron" />
           </div>
+          <div className="hero-keyword-mobile">
+            <HeroKeyword stage={stage} reduced={reduced} />
+          </div>
         </div>
       </section>
 
@@ -160,14 +163,10 @@ export function HomePage() {
             <p className="kicker section-kicker">About</p>
             <h2>I design cloud systems that stay reliable after they go live.</h2>
             <p>
-              I work on AWS architecture, serverless backends, and the automation that keeps those
-              systems deployable. The parts that matter most to me are the ones that are easy to
-              skip: IAM, monitoring, and the path a change takes from commit to production.
+            I’m a Cloud & DevOps Engineer with a strong foundation in AWS, cloud infrastructure, automation, and CI/CD. With a First-Class BSc (Hons) in Cloud Computing and hands-on DevOps experience in a UK-based company.
             </p>
             <p>
-              I also teach AWS in Sinhala through CloudNest, turning architecture into explanations
-              people can actually use. I take ownership of the work, keep improving how it is built,
-              and treat teaching as part of the same craft.
+              Beyond engineering, I enjoy building practical projects, sharing knowledge, and exploring emerging technologies such as high-performance and quantum computing. I’m passionate about learning, solving real-world challenges, and building reliable, scalable cloud solutions.
             </p>
             <p className="about-now-label">Currently</p>
             <ul className="about-now">

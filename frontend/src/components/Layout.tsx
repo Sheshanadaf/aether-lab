@@ -1,5 +1,5 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 const links = [
   { to: "/", hash: "", label: "Home" },
@@ -21,6 +21,20 @@ function isCurrent(pathname: string, hash: string, item: (typeof links)[number])
 export function Layout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const labs = location.pathname === "/labs";
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname, location.hash]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 721px)");
+    const close = () => {
+      if (mq.matches) setMenuOpen(false);
+    };
+    mq.addEventListener("change", close);
+    return () => mq.removeEventListener("change", close);
+  }, []);
 
   useEffect(() => {
     if (location.pathname !== "/") return;
@@ -36,10 +50,22 @@ export function Layout({ children }: { children: ReactNode }) {
     <div className="shell shell-full">
       <div>
         <header className="nav">
-          <NavLink to="/" className="brand">
+          <NavLink to="/" className="brand" onClick={() => setMenuOpen(false)}>
             Sheshan Hebron <span>live</span>
           </NavLink>
-          <nav className="nav-links">
+          <button
+            type="button"
+            className={`nav-toggle${menuOpen ? " is-open" : ""}`}
+            aria-expanded={menuOpen}
+            aria-controls="site-nav"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+          <nav id="site-nav" className={`nav-links${menuOpen ? " is-open" : ""}`}>
             {links.map((l) => (
               <Link
                 key={l.label}

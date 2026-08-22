@@ -185,7 +185,7 @@ def _presign_upload(event, request_id):
                 "requestId": request_id,
                 "path": [
                     {"service": "Amazon API Gateway", "role": "POST /uploads"},
-                    {"service": "AWS Lambda", "role": "presign PutObject — file not here"},
+                    {"service": "AWS Lambda", "role": "presign PutObject | file not here"},
                     {"service": "Amazon S3", "role": "browser PUT to inbox (60s URL)"},
                     {"service": "Amazon EventBridge", "role": "Object Created"},
                     {"service": "AWS Lambda", "role": "read metadata"},

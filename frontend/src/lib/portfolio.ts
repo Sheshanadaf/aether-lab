@@ -119,7 +119,7 @@ export const PROJECTS: Project[] = [
     name: "Aether Lab",
     title: "Aether Lab – Live Serverless AWS Lab",
     blurb:
-      "A live CloudFront + Lambda lab you can walk hop by hop: private S3, HTTP API, DynamoDB, SQS/DLQ, Cognito JWT, Terraform, and GitHub Actions OIDC — on a small monthly budget.",
+      "A live CloudFront + Lambda lab you can walk hop by hop: private S3, HTTP API, DynamoDB, SQS/DLQ, Cognito JWT, Terraform, and GitHub Actions OIDC, on a small monthly budget.",
     image: "/aether-lab-architecture.png",
     alt: "Aether Lab AWS architecture diagram",
     links: [
@@ -132,7 +132,7 @@ export const PROJECTS: Project[] = [
     name: "Job Recommendation System on AWS",
     title: "Job Recommendation System on AWS",
     blurb:
-      "React and Node job-matching hosted on AWS: S3 frontend, ALB and Auto Scaling EC2, SageMaker, Lambda, and DocumentDB — with an architecture diagram and demo walkthrough.",
+      "React and Node job-matching hosted on AWS: S3 frontend, ALB and Auto Scaling EC2, SageMaker, Lambda, and DocumentDB, with an architecture diagram and demo walkthrough.",
     image: "/job-rec-architecture.png",
     alt: "Job Recommendation System on AWS architecture",
     links: [
