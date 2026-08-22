@@ -220,31 +220,40 @@ const UPLOAD_MS = 170;
 
 function useUploadTravel(playKey: string, enabled: boolean, onTravelEnd?: () => void) {
   const [step, setStep] = useState(-1);
+  const [pulse, setPulse] = useState(-1);
   const end = useRef(onTravelEnd);
   end.current = onTravelEnd;
 
   useEffect(() => {
     if (!enabled || !playKey) {
       setStep(-1);
+      setPulse(-1);
       return;
     }
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) {
       setStep(UPLOAD_STEPS - 1);
+      setPulse(-1);
       end.current?.();
       return;
     }
     setStep(0);
+    setPulse(0);
     const timers = Array.from({ length: UPLOAD_STEPS }, (_, i) =>
       window.setTimeout(() => {
         setStep(i);
+        setPulse(i);
         if (i === UPLOAD_STEPS - 1) end.current?.();
       }, i * UPLOAD_MS),
     );
-    return () => timers.forEach((id) => window.clearTimeout(id));
+    const hide = window.setTimeout(() => setPulse(-1), UPLOAD_STEPS * UPLOAD_MS);
+    return () => {
+      timers.forEach((id) => window.clearTimeout(id));
+      window.clearTimeout(hide);
+    };
   }, [playKey, enabled]);
 
-  return step;
+  return { step, pulse };
 }
 
 function useTravel(playKey: string, edges: number, onTravelEnd?: () => void) {
@@ -270,7 +279,11 @@ function useTravel(playKey: string, edges: number, onTravelEnd?: () => void) {
         if (i === edges - 1) end.current?.();
       }, i * STEP_MS),
     );
-    return () => timers.forEach((id) => window.clearTimeout(id));
+    const hide = window.setTimeout(() => setAt(-1), edges * STEP_MS);
+    return () => {
+      timers.forEach((id) => window.clearTimeout(id));
+      window.clearTimeout(hide);
+    };
   }, [playKey, edges]);
 
   return at;
@@ -279,7 +292,9 @@ function useTravel(playKey: string, edges: number, onTravelEnd?: () => void) {
 function Svc({ hop, fail }: { hop: Hop; fail?: boolean }) {
   return (
     <div className={`lab-svc${fail ? " is-fail" : ""}`}>
-      <img src={iconFor(hop.service)} alt="" />
+      <div className="lab-svc-node">
+        <img src={iconFor(hop.service)} alt="" />
+      </div>
       <strong>{hop.service}</strong>
       <span>{hop.role}</span>
     </div>
@@ -309,11 +324,6 @@ function FlowArrow({
     >
       {label ? <em className="lab-async">{label}</em> : null}
       {vertical ? (
-        <svg viewBox="0 0 16 52" fill="none">
-          <path d="M8 4 V40" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-          <path d="M3 36 L8 46 L13 36" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      ) : back ? (
         <svg viewBox="0 0 16 52" fill="none">
           <path d="M8 4 V40" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           <path d="M3 36 L8 46 L13 36" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -429,7 +439,7 @@ export function LabArchitecture({
   const playKey = `${requestId}:${poison ? "p" : "ok"}:${shown.map((h) => h.service).join(">")}`;
   const travel = useTravel(special ? "" : playKey, special ? 0 : edges, onTravelEnd);
   const poisonStep = usePoisonTravel(playKey, poisonLayout, onStatus, onTravelEnd);
-  const uploadStep = useUploadTravel(playKey, uploadLayout, onTravelEnd);
+  const upload = useUploadTravel(playKey, uploadLayout, onTravelEnd);
   const getTravel = useTravel(
     quizGetOnly ? playKey : "",
     quizGetOnly ? Math.max(0, quizGet.length - 1) : 0,
@@ -502,22 +512,22 @@ export function LabArchitecture({
               <p className="lab-path-label lab-path-label-phone">POST /uploads · presign</p>
               <Svc hop={shown[0]} />
               <div className="lab-upload-io">
-                <FlowArrow down={phone} live={uploadStep === 0} label="POST /uploads" />
-                <FlowArrow back={!phone} up={phone} live={uploadStep === 1} label="presigned URL" />
+                <FlowArrow down={phone} live={upload.pulse === 0} label="POST /uploads" />
+                <FlowArrow back={!phone} up={phone} live={upload.pulse === 1} label="presigned URL" />
               </div>
               <Svc hop={shown[1]} />
             </div>
             <div className="lab-upload-put">
               <p className="lab-path-label lab-path-label-phone">Browser PUT · record</p>
               <Svc hop={shown[2]} />
-              <div className={`lab-upload-late${uploadStep >= 2 ? "" : " is-off"}`}>
-                <FlowArrow down={phone} live={uploadStep === 2} label="PUT" />
+              <div className={`lab-upload-late${upload.step >= 2 ? "" : " is-off"}`}>
+                <FlowArrow down={phone} live={upload.pulse === 2} label="PUT" />
                 <Svc hop={shown[3]} />
-                <FlowArrow down={phone} live={uploadStep === 3} label="Event" />
+                <FlowArrow down={phone} live={upload.pulse === 3} label="Event" />
                 <Svc hop={shown[4]} />
-                <FlowArrow down={phone} live={uploadStep === 4} label="Async" />
+                <FlowArrow down={phone} live={upload.pulse === 4} label="Async" />
                 <Svc hop={shown[5]} />
-                <FlowArrow down={phone} live={uploadStep === 5} />
+                <FlowArrow down={phone} live={upload.pulse === 5} />
                 <Svc hop={shown[6]} />
               </div>
             </div>
@@ -580,6 +590,10 @@ export function LabArchitecture({
             </div>
           </div>
           )
+        ) : phone ? (
+          <div className="lab-flow is-simple is-vert">
+            <PathRow hops={shown} travel={travel} vertical />
+          </div>
         ) : (
           <div className="lab-flow">
             <div className="lab-flow-row">
