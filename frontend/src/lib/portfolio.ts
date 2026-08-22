@@ -7,8 +7,8 @@ export const LINKS = {
   email: "mailto:sheshanhebron61@gmail.com",
   resume: "/Sheshan-Hebron-CV.pdf",
   aetherRepo: "https://github.com/Sheshanadaf/aether-lab",
-  saa: "https://www.credly.com/badges/524eb158-406b-4d44-b663-29e71ff024a8/public_url",
-  ccp: "https://www.credly.com/badges/42e6b4ed-a42b-4ae2-ad0c-5f785bbe29ed/linked_in_profile",
+  ccp: "https://www.credly.com/badges/524eb158-406b-4d44-b663-29e71ff024a8/public_url",
+  saa: "https://www.credly.com/badges/42e6b4ed-a42b-4ae2-ad0c-5f785bbe29ed/linked_in_profile",
 };
 
 export type ShareItem = {
