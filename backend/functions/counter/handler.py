@@ -108,11 +108,11 @@ def _submit_job(event, request_id):
                 "requestId": request_id,
                 "path": [
                     {"service": "Amazon API Gateway", "role": "POST /jobs"},
-                    {"service": "AWS Lambda", "role": "enqueue only — does not wait"},
+                    {"service": "AWS Lambda", "role": "enqueue only | does not wait"},
                     {"service": "Amazon SQS", "role": "jobs queue"},
                     {"service": "AWS Lambda", "role": "worker (async)"},
                     {"service": "Amazon DynamoDB", "role": "job row when success"},
-                    {"service": "Amazon SQS DLQ", "role": "after 3 failures (poison)"},
+                    {"service": "Amazon SQS DLQ", "role": "SQS redrive after 3 failed receives"},
                 ],
             },
         },
@@ -329,10 +329,10 @@ def _quiz_post(event, request_id):
             "trace": {
                 "requestId": request_id,
                 "path": [
-                    {"service": "Amazon API Gateway", "role": "JWT authorizer — already passed"},
+                    {"service": "Amazon API Gateway", "role": "JWT authorizer checks the IdToken"},
+                    {"service": "Amazon Cognito", "role": "user pool / JWKS — before Lambda runs"},
                     {"service": "AWS Lambda", "role": f"score for sub {sub[:8]}…"},
                     {"service": "Amazon DynamoDB", "role": "QUIZ#sub result"},
-                    {"service": "Amazon Cognito", "role": "user pool issued the IdToken"},
                 ],
             },
         },

@@ -1,6 +1,5 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useEffect, type ReactNode } from "react";
-import { Tracer } from "./Tracer";
 
 const links = [
   { to: "/", hash: "", label: "Home" },
@@ -34,7 +33,7 @@ export function Layout({ children }: { children: ReactNode }) {
   }, [location.pathname, location.hash]);
 
   return (
-    <div className={`shell ${labs ? "shell-labs" : "shell-full"}`}>
+    <div className="shell shell-full">
       <div>
         <header className="nav">
           <NavLink to="/" className="brand">
@@ -52,11 +51,10 @@ export function Layout({ children }: { children: ReactNode }) {
             ))}
           </nav>
         </header>
-        <main className={`main ${labs ? "" : "main-wide"} ${location.pathname === "/" ? "main-home" : ""}`}>
+        <main className={`main ${labs ? "main-labs" : "main-wide"} ${location.pathname === "/" ? "main-home" : ""}`}>
           {children}
         </main>
       </div>
-      {labs ? <Tracer /> : null}
     </div>
   );
 }
