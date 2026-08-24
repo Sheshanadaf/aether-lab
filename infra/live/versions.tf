@@ -26,3 +26,17 @@ provider "aws" {
     }
   }
 }
+
+# CloudFront ACM certificates must be in us-east-1.
+provider "aws" {
+  alias  = "use1"
+  region = "us-east-1"
+
+  default_tags {
+    tags = {
+      Project     = var.project
+      ManagedBy   = "terraform"
+      Environment = "prod"
+    }
+  }
+}

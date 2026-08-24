@@ -18,8 +18,22 @@ export const ATLAS: AtlasRow[] = [
     name: "Amazon CloudFront",
     family: "Networking",
     live: true,
-    usedFor: "HTTPS, cache, default cert. Shield Standard is on automatically.",
+    usedFor: "HTTPS, cache, OAC to private S3. Custom domain uses ACM in us-east-1. Shield Standard is on automatically.",
     whenAtWork: "Put a CDN in front of any internet-facing content.",
+  },
+  {
+    name: "Amazon Route 53",
+    family: "Networking",
+    live: false,
+    usedFor: "Not used for this domain. sheshanhebron.com is registered at Cloudflare; CloudFront is still the CDN.",
+    whenAtWork: "DNS and domain registration. Use alias A/AAAA to CloudFront when the domain lives in Route 53.",
+  },
+  {
+    name: "AWS Certificate Manager",
+    family: "Security",
+    live: true,
+    usedFor: "Free public cert in us-east-1 for CloudFront on sheshanhebron.com. DNS validation CNAMEs at Cloudflare.",
+    whenAtWork: "TLS for CloudFront (must be us-east-1) and ALB/API (regional). Do not buy a third-party cert for this.",
   },
   {
     name: "AWS Lambda (arm64)",

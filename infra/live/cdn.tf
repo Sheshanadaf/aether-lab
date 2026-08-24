@@ -33,6 +33,7 @@ resource "aws_cloudfront_distribution" "site" {
   default_root_object = "index.html"
   price_class         = "PriceClass_200"
   wait_for_deployment = false
+  aliases             = var.attach_custom_domain ? [var.custom_domain, "www.${var.custom_domain}"] : []
 
   origin {
     domain_name              = aws_s3_bucket.site.bucket_regional_domain_name
@@ -49,6 +50,21 @@ resource "aws_cloudfront_distribution" "site" {
     cache_policy_id        = "658327ea-f89d-4fab-a63d-7e88639e58f6" # CachingOptimized
   }
 
+  # S3 OAC returns 403 for missing keys. Serve the SPA so /labs refresh works.
+  custom_error_response {
+    error_code            = 403
+    response_code         = 200
+    response_page_path    = "/index.html"
+    error_caching_min_ttl = 10
+  }
+
+  custom_error_response {
+    error_code            = 404
+    response_code         = 200
+    response_page_path    = "/index.html"
+    error_caching_min_ttl = 10
+  }
+
   restrictions {
     geo_restriction {
       restriction_type = "none"
@@ -56,7 +72,9 @@ resource "aws_cloudfront_distribution" "site" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    cloudfront_default_certificate = var.attach_custom_domain ? false : true
+    acm_certificate_arn            = var.attach_custom_domain ? aws_acm_certificate_validation.site[0].certificate_arn : null
+    ssl_support_method             = var.attach_custom_domain ? "sni-only" : null
     minimum_protocol_version       = "TLSv1.2_2021"
   }
 }

@@ -63,7 +63,9 @@ jobs:
       - name: Terraform init and apply
         run: |
           terraform init -backend-config=backend.hcl -input=false
-          terraform apply -auto-approve -input=false
+          terraform apply -auto-approve -input=false \
+            -var="enable_custom_domain=true" \
+            -var="attach_custom_domain=true"
       - name: Outputs
         id: out
         run: |

@@ -659,7 +659,7 @@ export function LabsPage() {
         <h1>
           Press a Button. Wake Up <span className="lab-aws">AWS</span>
         </h1>
-        <p>Perform simple cloud actions, watch your request travel through your layered services in real time.</p>
+        <p>Perform simple cloud actions and watch your request travel through a real <span className="lab-aws">AWS architecture running behind the backend in real time.</span></p>
       </header>
 
       <div className="lab-switch" role="tablist" aria-label="Cloud Playground labs">

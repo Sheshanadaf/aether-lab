@@ -28,6 +28,10 @@ data "aws_iam_policy_document" "github_actions_deploy" {
       "sns:*",
       "cloudwatch:*",
       "xray:*",
+      "acm:*",
+      "route53:*",
+      "route53domains:GetDomainDetail",
+      "route53domains:ListDomains",
     ]
     resources = ["*"]
   }
