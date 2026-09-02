@@ -1,4 +1,4 @@
-bucket         = "aether-lab-tfstate-4bb51456"
+bucket         = ""
 key            = "live/terraform.tfstate"
 region         = "ap-south-1"
 dynamodb_table = "aether-lab-tf-lock"

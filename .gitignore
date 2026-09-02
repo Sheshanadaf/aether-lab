@@ -29,3 +29,20 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .coverage
+
+# Plans
+PLAN.md
+STEP-1.md
+STEP-2.md
+STEP-3.md
+STEP-4.md
+STEP-5.md
+STEP-6.md
+STEP-7.md
+STEP-8.md
+STEP-9.md
+STEP-10.md
+STEP-11.md
+STEP-12.md
+STEP-13.md
+STEP-14.md
