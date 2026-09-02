@@ -82,7 +82,7 @@ function uploadHops(path: Hop[]): Hop[] {
   if (!gw || !s3 || !bus || !ddb || !lambdas[0]) return path;
   return [
     gw,
-    { ...lambdas[0], role: "presign PutObject — file not here" },
+    { ...lambdas[0], role: "presign PutObject | file not here" },
     { service: "Browser", role: "PUT file with the 60s URL" },
     { ...s3, role: "private inbox | browser PUT" },
     { ...bus, role: "Object Created" },
