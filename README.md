@@ -9,7 +9,8 @@
 [![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge\&logo=react\&logoColor=%2361DAFB)](https://react.dev/)
 
 **Live Demo:** [sheshanhebron.com](https://sheshanhebron.com)
-**Medium Article:** [Aether Lab: real AWS labs behind my portfolio]([https://sheshanhebron.com](https://medium.com/@sheshanhebron61/aether-lab-real-aws-labs-behind-my-portfolio-0b3a829590f8?sharedUserId=sheshanhebron61))
+
+**Medium Article:** [Aether Lab: real AWS labs behind my portfolio](https://medium.com/@sheshanhebron61/aether-lab-real-aws-labs-behind-my-portfolio-0b3a829590f8?sharedUserId=sheshanhebron61)
 
 
 Aether Lab is my public proof-of-work: a production-grade portfolio site paired with interactive AWS labs. Instead of just reading an architecture diagram, visitors can trigger real cloud workflows, counters, asynchronous queues, direct S3 uploads, and authenticated APIs, and trace the backend execution path in real time.
