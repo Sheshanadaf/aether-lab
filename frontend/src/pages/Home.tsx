@@ -28,6 +28,7 @@ function ProjectAction({ link }: { link: ProjectLink }) {
     youtube: <YouTubeIcon />,
     labs: <LabsIcon />,
     web: <LabsIcon />,
+    medium: <MediumIcon />,
   };
 
   const className = "project-icon-btn";

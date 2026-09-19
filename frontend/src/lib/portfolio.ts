@@ -98,7 +98,7 @@ export const SKILL_ORBIT: SkillOrbitGroup[] = [
 ];
 
 export type ProjectLink = {
-  kind: "github" | "youtube" | "labs" | "web";
+  kind: "github" | "youtube" | "labs" | "web" | "medium";
   label: string;
   href: string;
 };
@@ -114,6 +114,27 @@ export type Project = {
 };
 
 export const PROJECTS: Project[] = [
+  {
+    kicker: "Featured Project",
+    name: "Relay",
+    title: "Relay - Production-shaped DevOps Project on AWS EKS",
+    blurb:
+      "Relay multi-service application deployed with Docker, Kubernetes, Helm, GitOps, and Terraform on AWS EKS, using ECR, GitHub Actions, private worker nodes, Redis, PostgreSQL, NLB, Prometheus, and Grafana, with an architecture diagram and deployment walkthrough.",
+    image: "/aws-eks.png",
+    alt: "Relay production-shaped DevOps architecture on AWS EKS",
+    links: [
+      {
+        kind: "github",
+        label: "GitHub repository",
+        href: "https://github.com/Sheshanadaf/Relay",
+      },
+      {
+        kind: "medium",
+        label: "Medium article",
+        href: "https://medium.com/@sheshanhebron61/relay-on-aws-eks-a-production-shaped-devops-architecture-6f3cfa2bbfec",
+      },
+    ],
+  },
   {
     kicker: "Featured Project",
     name: "Aether Lab",
@@ -142,22 +163,6 @@ export const PROJECTS: Project[] = [
         href: "https://github.com/Sheshanadaf/Job-Recommendation-System-on-AWS",
       },
       { kind: "youtube", label: "Demo video", href: "https://youtu.be/6er4gzglUt4" },
-    ],
-  },
-  {
-    kicker: "Featured Project",
-    name: "Library Management System on AWS",
-    title: "Library Management System on AWS",
-    blurb:
-      "A multi-AZ library web app shipped with CloudFormation: ALB, Auto Scaling EC2, DynamoDB, and a CodePipeline / CodeBuild / CodeDeploy path instead of a laptop-only demo.",
-    image: "/library-architecture.png",
-    alt: "Library Management System on AWS architecture",
-    links: [
-      {
-        kind: "github",
-        label: "GitHub repository",
-        href: "https://github.com/Sheshanadaf/library-managment-system-on-AWS",
-      },
     ],
   },
 ];
